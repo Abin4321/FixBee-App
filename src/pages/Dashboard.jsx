@@ -1,77 +1,63 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "../../services/adminService";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
-const services = [
-  { name: "Electrical", icon: "⚡" },
-  { name: "Plumbing", icon: "🚿" },
-  { name: "Cleaning", icon: "🧹" },
-  { name: "AC Repair", icon: "❄️" },
-];
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({});
+  const navigate = useNavigate();
 
-export default function Dashboard() {
+  useEffect(() => {
+    async function load() {
+      const data = await getDashboardStats();
+      setStats(data);
+    }
+    load();
+  }, []);
+
+  const cards = [
+    {
+      title: "Bookings",
+      value: stats.bookings || 0,
+      route: "/admin/bookings",
+    },
+    {
+      title: "Customers",
+      value: stats.customers || 0,
+      route: "/admin/customers",
+    },
+    {
+      title: "Technicians",
+      value: stats.technicians || 0,
+      route: "/admin/analytics",
+    },
+  ];
+
   return (
-    <>
-      <Navbar />
+    <div className="relative">
 
-      {/* Hero */}
-      <section className="bg-yellow-100 py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Book trusted home services instantly
-          </h1>
-          <p className="text-gray-700 mb-6">
-            Professional technicians • Transparent pricing • Fast service
-          </p>
+      <h1 className="text-3xl font-semibold mb-10">
+        Admin Overview
+      </h1>
 
-          <Link
-            to="/book"
-            className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800"
+      <div className="grid md:grid-cols-3 gap-6">
+        {cards.map((card, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate(card.route)}
+            className="cursor-pointer bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl transition"
           >
-            Book a Service
-          </Link>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-bold mb-6">Popular Services</h2>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {services.map((service) => (
-            <Link
-              key={service.name}
-              to="/book"
-              className="bg-white shadow rounded p-6 text-center hover:shadow-lg transition"
-            >
-              <div className="text-4xl mb-3">{service.icon}</div>
-              <h3 className="font-semibold">{service.name}</h3>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Active Bookings */}
-      <section className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-2xl font-bold mb-4">Your Bookings</h2>
-
-          <div className="bg-white p-6 rounded shadow">
-            <p className="text-gray-500 mb-4">
-              You currently have no active bookings.
+            <h2 className="text-lg text-gray-400">
+              {card.title}
+            </h2>
+            <p className="text-4xl font-bold mt-4">
+              {card.value}
             </p>
+          </motion.div>
+        ))}
+      </div>
 
-            <Link
-              to="/bookings"
-              className="text-yellow-600 font-medium hover:underline"
-            >
-              View booking history →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </>
+    </div>
   );
 }

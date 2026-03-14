@@ -1,15 +1,76 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, Outlet } from "react-router-dom"
+import { useEffect,useState } from "react"
+import { supabase } from "../services/supabase"
 
-export default function RoleRoute({ children, allowed }) {
-  const { user, profile, loading } = useAuth();
+export default function RoleRoute({ role }){
 
-  if (loading) return null;
-  if (!user || !profile) return <Navigate to="/" />;
+const [allowed,setAllowed] = useState(null)
 
-  if (!allowed.includes(profile.role)) {
-    return <Navigate to="/dashboard" />;
-  }
 
-  return children;
+
+useEffect(()=>{
+
+async function checkRole(){
+
+const { data:{ user } } = await supabase.auth.getUser()
+
+if(!user){
+
+setAllowed(false)
+return
+
+}
+
+
+
+const { data } = await supabase
+
+.from("profiles")
+
+.select("role")
+
+.eq("id",user.id)
+
+.single()
+
+
+
+if(data?.role === role){
+
+setAllowed(true)
+
+}else{
+
+setAllowed(false)
+
+}
+
+}
+
+
+
+checkRole()
+
+},[role])
+
+
+
+if(allowed === null){
+
+return <div className="p-10 text-center">Loading...</div>
+
+}
+
+
+
+if(!allowed){
+
+return <Navigate to="/unauthorized"/>
+
+}
+
+
+
+return <Outlet/>
+
 }

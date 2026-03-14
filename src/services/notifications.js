@@ -1,10 +1,14 @@
-import { supabase } from "./supabase";
+// src/services/notification.js
+import { supabase } from "./supabase.js";
 
-export async function sendNotification(userId, title, message, type = "info") {
-  return supabase.from("notifications").insert({
-    user_id: userId,
-    title,
-    message,
-    type,
-  });
+export async function getNotifications(userId) {
+  const { data, error } = await supabase.from("notifications").select("*").eq("user_id", userId);
+  if (error) throw error;
+  return data;
+}
+
+export async function markAsRead(notificationId) {
+  const { data, error } = await supabase.from("notifications").update({ is_read: true }).eq("id", notificationId);
+  if (error) throw error;
+  return data;
 }

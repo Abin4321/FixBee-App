@@ -1,76 +1,92 @@
 import { Routes, Route } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import TechnicianTasks from "./pages/TechnicianTasks";
-import BookService from "./pages/BookService";
-import MyBookings from "./pages/MyBookings";
-import Profile from "./pages/Profile";
-import BookingSuccess from "./pages/BookingSuccess";
-import Notifications from "./pages/Notifications";
-import Chat from "./pages/Chat";
+// Admin pages
+import AdminLayout from "./pages/Admin/AdminLayout.jsx";
+import Dashboard from "./pages/Admin/Dashboard.jsx";
+import Bookings from "./pages/Admin/Bookings.jsx";
+import Customers from "./pages/Admin/Customers.jsx";
+import Technicians from "./pages/Admin/Technicians.jsx";
+import Services from "./pages/Admin/Services.jsx";
+import Analytics from "./pages/Admin/Analytics.jsx";
+import Messages from "./pages/Admin/Messages.jsx";
+import Notifications from "./pages/Admin/Notifications.jsx";
+import Settings from "./pages/Admin/Settings.jsx";
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import RoleRoute from "./components/RoleRoute";
+// Auth pages
+import Login from "./pages/Auth/Login.jsx";
+import Register from "./pages/Auth/Register.jsx";
+import ForgotPassword from "./pages/Auth/ForgotPassword.jsx";
 
-/* ADMIN MODULE */
-import AdminLayout from "./pages/Admin/AdminLayout";
-import AdminDashboard from "./pages/Admin/Dashboard";
-import AdminBookings from "./pages/Admin/Bookings";
-import AdminCustomers from "./pages/Admin/Customers";
-import AdminAnalytics from "./pages/Admin/Analytics";
-import AdminSettings from "./pages/Admin/Settings";
+// Shared pages
+import Loading from "./pages/Shared/Loading.jsx";
+import Unauthorized from "./pages/Shared/Unauthorized.jsx";
+import NotFound from "./pages/Shared/NotFound.jsx";
 
-export default function App() {
+// User pages
+import UserDashboard from "./pages/User/Dashboard.jsx";
+import ServicesPage from "./pages/User/Services.jsx";
+import BookService from "./pages/User/BookService.jsx";
+import MyBookings from "./pages/User/MyBookings.jsx";
+import BookingSuccess from "./pages/User/BookingSuccess.jsx";
+import UserChat from "./pages/User/Chat.jsx";
+import UserNotifications from "./pages/User/Notifications.jsx";
+import UserProfile from "./pages/User/Profile.jsx";
+
+// Worker pages
+import WorkerDashboard from "./pages/Worker/Dashboard.jsx";
+import TechnicianTasks from "./pages/Worker/TechnicianTasks.jsx";
+import WorkerChat from "./pages/Worker/Chat.jsx";
+import WorkerNotifications from "./pages/Worker/Notifications.jsx";
+import WorkerProfile from "./pages/Worker/Profile.jsx";
+
+function App() {
   return (
     <Routes>
+      {/* Auth */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* PUBLIC */}
-      <Route path="/" element={<Login />} />
+      {/* Shared */}
+      <Route path="/loading" element={<Loading />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/not-found" element={<NotFound />} />
 
-      {/* CUSTOMER ROUTES */}
-      <Route
-        path="/dashboard"
-        element={
-          <RoleRoute allowed={["customer"]}>
-            <Dashboard />
-          </RoleRoute>
-        }
-      />
+      {/* User Routes */}
+      <Route path="/user/dashboard" element={<UserDashboard />} />
+      <Route path="/user/services" element={<ServicesPage />} />
+      <Route path="/user/book-service" element={<BookService />} />
+      <Route path="/user/mybookings" element={<MyBookings />} />
+      <Route path="/user/bookingsuccess" element={<BookingSuccess />} />
+      <Route path="/user/chat" element={<UserChat />} />
+      <Route path="/user/notifications" element={<UserNotifications />} />
+      <Route path="/user/profile" element={<UserProfile />} />
 
-      <Route path="/book" element={<ProtectedRoute><BookService /></ProtectedRoute>} />
-      <Route path="/bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      <Route path="/chat/:bookingId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-      <Route path="/booking-success" element={<ProtectedRoute><BookingSuccess /></ProtectedRoute>} />
+      {/* Worker Routes */}
+      <Route path="/worker/dashboard" element={<WorkerDashboard />} />
+      <Route path="/worker/tasks" element={<TechnicianTasks />} />
+      <Route path="/worker/chat" element={<WorkerChat />} />
+      <Route path="/worker/notifications" element={<WorkerNotifications />} />
+      <Route path="/worker/profile" element={<WorkerProfile />} />
 
-      {/* ADMIN MODULE */}
-      <Route
-        path="/admin/*"
-        element={
-          <RoleRoute allowed={["admin"]}>
-            <AdminLayout />
-          </RoleRoute>
-        }
-      >
-        <Route index element={<AdminDashboard />} />
-        <Route path="bookings" element={<AdminBookings />} />
-        <Route path="customers" element={<AdminCustomers />} />
-        <Route path="analytics" element={<AdminAnalytics />} />
-        <Route path="settings" element={<AdminSettings />} />
+      {/* Admin Routes */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="bookings" element={<Bookings />} />
+        <Route path="customers" element={<Customers />} />
+        <Route path="technicians" element={<Technicians />} />
+        <Route path="services" element={<Services />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="messages" element={<Messages />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
 
-      {/* TECHNICIAN */}
-      <Route
-        path="/tasks"
-        element={
-          <RoleRoute allowed={["technician"]}>
-            <TechnicianTasks />
-          </RoleRoute>
-        }
-      />
-
+      {/* Catch all */}
+      <Route path="/" element={<Login />} />
     </Routes>
   );
 }
+
+export default App;

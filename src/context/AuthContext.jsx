@@ -1,6 +1,7 @@
+// src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../services/supabase";
-import { getProfile } from "../services/auth";
+import { supabase } from "../services/supabase.js";
+import { getProfile } from "../services/auth.js";
 
 const AuthContext = createContext();
 
@@ -10,13 +11,12 @@ export function AuthProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Initial session + listener
   useEffect(() => {
-    // Initial session
     supabase.auth.getSession().then(({ data }) => {
       handleSession(data.session);
     });
 
-    // Listen to auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         handleSession(session);
@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
     return () => authListener.subscription.unsubscribe();
   }, []);
 
+  // Handle session changes
   async function handleSession(session) {
     if (!session) {
       setUser(null);
@@ -38,7 +39,7 @@ export function AuthProvider({ children }) {
     try {
       setUser(session.user);
 
-      // Profile already created by DB trigger
+      // Fetch profile using getProfile from auth.js
       const profileData = await getProfile(session.user);
       setProfile(profileData);
 
@@ -58,7 +59,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // 🔔 REALTIME NOTIFICATIONS
+  // REAL-TIME NOTIFICATIONS
   useEffect(() => {
     if (!user) return;
 

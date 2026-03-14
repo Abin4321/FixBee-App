@@ -15,7 +15,7 @@ import Settings from "./pages/Admin/Settings.jsx";
 // Auth pages
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
-import ForgotPassword from "./pages/Auth/ForgotPassword.jsx";
+import ForgotPassword from "./pages/Auth/ForgotPass.jsx";
 
 // Shared pages
 import Loading from "./pages/Shared/Loading.jsx";

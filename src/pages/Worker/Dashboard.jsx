@@ -1,219 +1,141 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { supabase } from "../../services/supabase";
 
-import { getWorkerBookings } from "../../services/workerService.js";
-import { getCurrentUser } from "../../services/auth.js";
+export default function WorkerDashboard(){
 
-export default function Unauthorized(){
+  const [tasks,setTasks] = useState([]);
+  const [stats,setStats] = useState({
+    assigned:0,
+    pending:0,
+    completed:0
+  });
 
-return(
+  useEffect(()=>{
+    loadTasks();
+  },[]);
 
-<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100 p-6">
 
-<div className="max-w-3xl w-full text-center space-y-10">
+  async function loadTasks(){
 
-{/* ICON */}
+    const {data:userData} = await supabase.auth.getUser();
 
-<motion.div
-initial={{scale:0}}
-animate={{scale:1}}
-transition={{duration:0.5}}
-className="w-28 h-28 bg-red-100 rounded-full flex items-center justify-center mx-auto text-4xl"
->
+    if(!userData?.user) return;
 
-🔒
+    const workerId = userData.user.id;
 
-</motion.div>
+    const {data,error} = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("technician_id",workerId)
+      .order("created_at",{ascending:false});
 
+    if(error){
+      console.error(error);
+      return;
+    }
 
+    setTasks(data);
 
-{/* TITLE */}
+    calculateStats(data);
+  }
 
-<motion.h1
-initial={{opacity:0,y:20}}
-animate={{opacity:1,y:0}}
-transition={{delay:0.2}}
-className="text-4xl font-bold text-gray-800"
->
 
-Access Denied
+  function calculateStats(data){
 
-</motion.h1>
+    const assigned = data.length;
 
+    const pending = data.filter(b=>b.status==="assigned").length;
 
+    const completed = data.filter(b=>b.status==="completed").length;
 
-{/* MESSAGE */}
+    setStats({assigned,pending,completed});
+  }
 
-<motion.p
-initial={{opacity:0}}
-animate={{opacity:1}}
-transition={{delay:0.4}}
-className="text-gray-500 max-w-xl mx-auto"
->
 
-You don't have permission to access this page.
-This area may be restricted to administrators
-or specific user roles.
+  return(
 
-</motion.p>
+    <div className="space-y-8">
 
+      <h1 className="text-2xl font-bold">
+        Technician Dashboard
+      </h1>
 
 
-{/* ACTION BUTTONS */}
+      {/* STATS */}
 
-<motion.div
-initial={{opacity:0}}
-animate={{opacity:1}}
-transition={{delay:0.6}}
-className="flex flex-wrap justify-center gap-4"
->
+      <div className="grid md:grid-cols-3 gap-6">
 
-<Link
-to="/dashboard"
-className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
->
+        <StatCard title="Total Jobs" value={stats.assigned}/>
+        <StatCard title="Pending" value={stats.pending}/>
+        <StatCard title="Completed" value={stats.completed}/>
 
-Go to Dashboard
+      </div>
 
-</Link>
 
-<Link
-to="/services"
-className="border px-6 py-3 rounded-lg hover:bg-gray-50 transition"
->
+      {/* TASK LIST */}
 
-Browse Services
+      <div className="bg-white p-6 rounded-xl shadow">
 
-</Link>
+        <h2 className="font-semibold mb-4">
+          Assigned Jobs
+        </h2>
 
-<Link
-to="/"
-className="border px-6 py-3 rounded-lg hover:bg-gray-50 transition"
->
+        <div className="space-y-3">
 
-Back Home
+          {tasks.slice(0,5).map(task=>(
+            <div
+              key={task.id}
+              className="flex justify-between border p-4 rounded"
+            >
 
-</Link>
+              <div>
 
-</motion.div>
+                <p className="font-medium">
+                  {task.service}
+                </p>
 
+                <p className="text-sm text-gray-500">
+                  {task.service_date}
+                </p>
 
+              </div>
 
-{/* HELP CARDS */}
+              <span className="text-xs bg-blue-100 px-2 py-1 rounded">
 
-<div className="grid md:grid-cols-3 gap-6 pt-10">
+                {task.status}
 
-<motion.div
-whileHover={{scale:1.05}}
-className="bg-white p-6 rounded-xl shadow-sm border"
->
+              </span>
 
-<h3 className="font-semibold mb-2">
+            </div>
+          ))}
 
-Customer Area
+        </div>
 
-</h3>
+      </div>
 
-<p className="text-sm text-gray-500 mb-4">
+    </div>
 
-Book services and track technician visits.
+  );
 
-</p>
+}
 
-<Link
-to="/services"
-className="text-indigo-600 text-sm font-medium"
->
 
-Explore →
 
-</Link>
+function StatCard({title,value}){
 
-</motion.div>
+  return(
 
+    <div className="bg-white p-6 rounded-xl shadow">
 
+      <p className="text-sm text-gray-500">
+        {title}
+      </p>
 
-<motion.div
-whileHover={{scale:1.05}}
-className="bg-white p-6 rounded-xl shadow-sm border"
->
+      <h2 className="text-2xl font-bold">
+        {value}
+      </h2>
 
-<h3 className="font-semibold mb-2">
+    </div>
 
-Technician Panel
-
-</h3>
-
-<p className="text-sm text-gray-500 mb-4">
-
-View assigned bookings and manage jobs.
-
-</p>
-
-<Link
-to="/worker/dashboard"
-className="text-indigo-600 text-sm font-medium"
->
-
-Technician Dashboard →
-
-</Link>
-
-</motion.div>
-
-
-
-<motion.div
-whileHover={{scale:1.05}}
-className="bg-white p-6 rounded-xl shadow-sm border"
->
-
-<h3 className="font-semibold mb-2">
-
-Need Help?
-
-</h3>
-
-<p className="text-sm text-gray-500 mb-4">
-
-Contact support if you think this is a mistake.
-
-</p>
-
-<Link
-to="/chat"
-className="text-indigo-600 text-sm font-medium"
->
-
-Contact Support →
-
-</Link>
-
-</motion.div>
-
-</div>
-
-
-
-{/* BACKGROUND SECURITY ANIMATION */}
-
-<motion.div
-animate={{rotate:360}}
-transition={{repeat:Infinity,duration:25,linear:true}}
-className="absolute top-24 left-10 w-24 h-24 border border-red-200 rounded-full"
-/>
-
-<motion.div
-animate={{rotate:-360}}
-transition={{repeat:Infinity,duration:30,linear:true}}
-className="absolute bottom-24 right-10 w-32 h-32 border border-indigo-200 rounded-full"
-/>
-
-</div>
-
-</div>
-
-)
-
+  );
 }

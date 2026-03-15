@@ -1,7 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 
-// Admin pages
-import AdminLayout from "./pages/Admin/AdminLayout.jsx";
+/* ROUTE GUARDS */
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import RoleRoute from "./components/RoleRoute.jsx";
+
+/* LAYOUTS */
+import UserLayout from "./layouts/UserLayout.jsx";
+import WorkerLayout from "./layouts/WorkerLayout.jsx";
+import AdminLayout from "./layouts/AdminLayout.jsx";
+
+/* ADMIN PAGES */
 import Dashboard from "./pages/Admin/Dashboard.jsx";
 import Bookings from "./pages/Admin/Bookings.jsx";
 import Customers from "./pages/Admin/Customers.jsx";
@@ -12,17 +20,17 @@ import Messages from "./pages/Admin/Messages.jsx";
 import Notifications from "./pages/Admin/Notifications.jsx";
 import Settings from "./pages/Admin/Settings.jsx";
 
-// Auth pages
+/* AUTH PAGES */
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
 import ForgotPassword from "./pages/Auth/ForgotPass.jsx";
 
-// Shared pages
+/* SHARED PAGES */
 import Loading from "./pages/Shared/Loading.jsx";
 import Unauthorized from "./pages/Shared/Unauthorized.jsx";
 import NotFound from "./pages/Shared/NotFound.jsx";
 
-// User pages
+/* USER PAGES */
 import UserDashboard from "./pages/User/Dashboard.jsx";
 import ServicesPage from "./pages/User/Services.jsx";
 import BookService from "./pages/User/BookService.jsx";
@@ -32,7 +40,7 @@ import UserChat from "./pages/User/Chat.jsx";
 import UserNotifications from "./pages/User/Notifications.jsx";
 import UserProfile from "./pages/User/Profile.jsx";
 
-// Worker pages
+/* WORKER PAGES */
 import WorkerDashboard from "./pages/Worker/Dashboard.jsx";
 import TechnicianTasks from "./pages/Worker/TechnicianTasks.jsx";
 import WorkerChat from "./pages/Worker/Chat.jsx";
@@ -40,53 +48,89 @@ import WorkerNotifications from "./pages/Worker/Notifications.jsx";
 import WorkerProfile from "./pages/Worker/Profile.jsx";
 
 function App() {
+
   return (
+
     <Routes>
-      {/* Auth */}
+
+      {/* AUTH ROUTES */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* Shared */}
+      {/* SHARED */}
       <Route path="/loading" element={<Loading />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/not-found" element={<NotFound />} />
 
-      {/* User Routes */}
-      <Route path="/user/dashboard" element={<UserDashboard />} />
-      <Route path="/user/services" element={<ServicesPage />} />
-      <Route path="/user/book-service" element={<BookService />} />
-      <Route path="/user/mybookings" element={<MyBookings />} />
-      <Route path="/user/bookingsuccess" element={<BookingSuccess />} />
-      <Route path="/user/chat" element={<UserChat />} />
-      <Route path="/user/notifications" element={<UserNotifications />} />
-      <Route path="/user/profile" element={<UserProfile />} />
+      {/* ================= USER ROUTES ================= */}
 
-      {/* Worker Routes */}
-      <Route path="/worker/dashboard" element={<WorkerDashboard />} />
-      <Route path="/worker/tasks" element={<TechnicianTasks />} />
-      <Route path="/worker/chat" element={<WorkerChat />} />
-      <Route path="/worker/notifications" element={<WorkerNotifications />} />
-      <Route path="/worker/profile" element={<WorkerProfile />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<RoleRoute role="customer" />}>
 
-      {/* Admin Routes */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="bookings" element={<Bookings />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="technicians" element={<Technicians />} />
-        <Route path="services" element={<Services />} />
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="notifications" element={<Notifications />} />
-        <Route path="settings" element={<Settings />} />
+          <Route path="/user" element={<UserLayout />}>
+
+            <Route path="dashboard" element={<UserDashboard />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="book-service" element={<BookService />} />
+            <Route path="mybookings" element={<MyBookings />} />
+            <Route path="bookingsuccess" element={<BookingSuccess />} />
+            <Route path="chat" element={<UserChat />} />
+            <Route path="notifications" element={<UserNotifications />} />
+            <Route path="profile" element={<UserProfile />} />
+
+          </Route>
+
+        </Route>
       </Route>
 
-      {/* Catch all */}
+      {/* ================= WORKER ROUTES ================= */}
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<RoleRoute role="technician" />}>
+
+          <Route path="/worker" element={<WorkerLayout />}>
+
+            <Route path="dashboard" element={<WorkerDashboard />} />
+            <Route path="tasks" element={<TechnicianTasks />} />
+            <Route path="chat" element={<WorkerChat />} />
+            <Route path="notifications" element={<WorkerNotifications />} />
+            <Route path="profile" element={<WorkerProfile />} />
+
+          </Route>
+
+        </Route>
+      </Route>
+
+      {/* ================= ADMIN ROUTES ================= */}
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<RoleRoute role="admin" />}>
+
+          <Route path="/admin" element={<AdminLayout />}>
+
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="technicians" element={<Technicians />} />
+            <Route path="services" element={<Services />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="settings" element={<Settings />} />
+
+          </Route>
+
+        </Route>
+      </Route>
+
+      {/* DEFAULT */}
       <Route path="/" element={<Login />} />
+      <Route path="*" element={<NotFound />} />
+
     </Routes>
+
   );
+
 }
 
 export default App;

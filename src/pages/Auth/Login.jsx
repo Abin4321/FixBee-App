@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-
+import { supabase } from "../../services/supabase.js";
 import { login } from "../../services/auth.js";
 
 
@@ -35,7 +35,22 @@ async function handleLogin(e) {
 
     const user = await login(email, password);
 
-    if (user) {
+    if (!user) throw new Error("Login failed");
+
+    // get role
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile) throw new Error("Profile not found");
+
+    if (profile.role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (profile.role === "technician") {
+      navigate("/worker/dashboard");
+    } else {
       navigate("/user/dashboard");
     }
 
@@ -45,7 +60,6 @@ async function handleLogin(e) {
 
   setLoading(false);
 }
-
 
 
 /* UI */

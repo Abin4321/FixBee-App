@@ -93,7 +93,10 @@ try{
 
 setLoading(true)
 
-await signUp(email,password,role)
+await signUp(email, password, {
+  role,
+  skills: skills.split(",").map(s => s.trim())
+});
 
 setSuccess("Account created successfully!")
 

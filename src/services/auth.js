@@ -12,14 +12,29 @@ export async function login(email, password) {
 }
 
 // SIGN UP
-export async function signUp(email, password, name) {
+export async function signUp(email, password, extraData) {
+
   const { data, error } = await supabase.auth.signUp({
     email,
-    password,
-    options: { data: { name } },
+    password
   });
+
   if (error) throw error;
-  return data.user;
+
+  const user = data.user;
+
+  if (user) {
+
+    await supabase.from("profiles").insert({
+      id: user.id,
+      email: email,
+      role: extraData.role,
+      skills: extraData.skills || []
+    });
+
+  }
+
+  return user;
 }
 
 // RESET PASSWORD

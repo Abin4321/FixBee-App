@@ -32,7 +32,7 @@ try{
 
 setLoading(true)
 
-await resetPassword(email)
+await sendPasswordResetEmail(email)
 
 setSuccess(true)
 

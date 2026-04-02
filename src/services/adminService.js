@@ -20,13 +20,21 @@ export async function getAllBookings() {
 }
 
 export async function getAllCustomers() {
-  const { data, error } = await supabase.from("profiles").select("*").eq("role", "user");
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("role", "customer");   // ✅ FIXED
+
   if (error) throw error;
   return data;
 }
 
 export async function getAllTechnicians() {
-  const { data, error } = await supabase.from("profiles").select("*").eq("role", "worker");
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("role", "technician");   // ✅ FIXED
+
   if (error) throw error;
   return data;
 }

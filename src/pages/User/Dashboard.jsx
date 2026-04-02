@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid
-} from "recharts";
 
 export default function UserDashboard(){
 
@@ -93,7 +84,7 @@ export default function UserDashboard(){
 
 
   if(loading){
-    return <div className="p-8">Loading dashboard...</div>
+    return <div className="p-8">Loading Dashboard...</div>
   }
 
 
@@ -118,38 +109,7 @@ export default function UserDashboard(){
       </div>
 
 
-      {/* CHART */}
-
-      <div className="bg-white p-6 rounded-xl shadow">
-
-        <h2 className="font-semibold mb-4">
-          Booking Activity
-        </h2>
-
-        <ResponsiveContainer width="100%" height={300}>
-
-          <LineChart data={chartData}>
-
-            <CartesianGrid strokeDasharray="3 3"/>
-
-            <XAxis dataKey="date"/>
-
-            <YAxis/>
-
-            <Tooltip/>
-
-            <Line
-              type="monotone"
-              dataKey="bookings"
-              stroke="#6366f1"
-              strokeWidth={3}
-            />
-
-          </LineChart>
-
-        </ResponsiveContainer>
-
-      </div>
+      
 
 
       {/* RECENT BOOKINGS */}

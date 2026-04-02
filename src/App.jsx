@@ -26,13 +26,13 @@ import Register from "./pages/Auth/Register.jsx";
 import ForgotPassword from "./pages/Auth/ForgotPass.jsx";
 
 /* SHARED PAGES */
-import Loading from "./pages/Shared/Loading.jsx";
 import Unauthorized from "./pages/Shared/Unauthorized.jsx";
 import NotFound from "./pages/Shared/NotFound.jsx";
 
 /* USER PAGES */
 import UserDashboard from "./pages/User/Dashboard.jsx";
 import ServicesPage from "./pages/User/Services.jsx";
+import UserAnalytics from "./pages/User/Analytics.jsx";
 import BookService from "./pages/User/BookService.jsx";
 import MyBookings from "./pages/User/MyBookings.jsx";
 import BookingSuccess from "./pages/User/BookingSuccess.jsx";
@@ -59,8 +59,8 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* SHARED */}
-      <Route path="/loading" element={<Loading />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/*" element={<NotFound />} />
 
       {/* ================= USER ROUTES ================= */}
 
@@ -71,6 +71,7 @@ function App() {
 
             <Route path="dashboard" element={<UserDashboard />} />
             <Route path="services" element={<ServicesPage />} />
+            <Route path="analytics" element={<UserAnalytics />} />
             <Route path="book-service" element={<BookService />} />
             <Route path="mybookings" element={<MyBookings />} />
             <Route path="bookingsuccess" element={<BookingSuccess />} />
@@ -125,7 +126,6 @@ function App() {
 
       {/* DEFAULT */}
       <Route path="/" element={<Login />} />
-      <Route path="*" element={<NotFound />} />
 
     </Routes>
 

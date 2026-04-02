@@ -64,9 +64,10 @@ export default function Navbar() {
   const customerTabs = [
 
     {name:"Dashboard",path:"/user/dashboard"},
+    {name:"Services",path:"/user/services"},
     {name:"Book Service",path:"/user/book-service"},
     {name:"My Bookings",path:"/user/mybookings"},
-    {name:"Services",path:"/user/services"}
+    {name:"Analytics",path:"/user/analytics"}
 
   ];
 
@@ -186,7 +187,7 @@ export default function Navbar() {
 
   <span className="text-gray-600 text-sm md:text-base">
 
-    Hi {getUserText()}
+    Hi, {getUserText()}
 
   </span>
 
@@ -195,8 +196,7 @@ export default function Navbar() {
 
   <button
     onClick={handleLogout}
-    className="hidden md:flex items-center gap-2 text-red-600 hover:text-red-700"
-  >
+    className="hidden md:flex items-center gap-2 text-red-600 hover:text-red-700 cursor-pointer transition-colors">
 
     <FiLogOut />
 

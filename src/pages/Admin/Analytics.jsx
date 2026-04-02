@@ -6,7 +6,7 @@ import { getAllBookings } from "../../services/adminService.js";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid,
-  BarChart, Bar, PieChart, Pie, Cell
+  BarChart, Bar, PieChart, Pie
 } from "recharts";
 
 export default function Analytics(){
